@@ -1,0 +1,8 @@
+FROM maven:3.9-eclipse-temurin-11 as builder
+WORKDIR /app
+COPY  ./ .
+RUN mvn clean package -DskipTests
+
+FROM eclipse-temurin:11-jre
+COPY --from=builder /app/target/final-capstone-starter-1.0.jar /bin/
+ENTRYPOINT ["java", "-jar", "/usr/bin/final-capstone-starter-1.0.jar"]

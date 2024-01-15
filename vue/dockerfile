@@ -1,0 +1,17 @@
+FROM node:latest as builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY ./ .
+
+# the template references an environment variable named API_HOST
+# a value for API_HOST should be passed to docker build using the ARG option
+ARG API_HOST
+RUN npm install -g envsub 
+RUN envsub .env.production.template .env.production
+RUN npm run build
+
+FROM nginx as prod
+RUN mkdir /app
+COPY --from=builder /app/dist /app
+COPY nginx.conf /etc/nginx/nginx.conf

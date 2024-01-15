@@ -1,0 +1,6 @@
+FROM postgres:12
+WORKDIR /docker-entrypoint-initdb.d
+COPY schema.sql 01_schema.sql
+COPY data.sql 02_data.sql
+COPY user.sql 03_user.sql
+ENV POSTGRES_DB=final_capstone

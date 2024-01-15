@@ -1,0 +1,36 @@
+
+networks:
+  tegram-network:
+
+services:
+  te-db:
+    build: ./java/database
+    networks:
+      - tegram-network
+    ports:
+      - 15432:5432
+    environment:
+      - POSTGRES_PASSWORD=postgres1
+
+  tegram-api:
+    build: ./java
+    networks:
+      - tegram-network
+    ports:
+      - 9000:9000
+    environment:
+      - dbhost=te-db
+    depends_on:
+      - te-db
+
+  tegram-app:
+    build: 
+      context: ./vue
+      args:
+        API_HOST: http://localhost:9000
+    networks:
+      - tegram-network
+    ports:
+      - 8080:80
+    depends_on:
+      - tegram-api
